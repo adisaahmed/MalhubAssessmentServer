@@ -22,7 +22,7 @@ const dbconnect = async ( DB_URL ) => {
             useUnifiedTopology: true,
         } )
         mongoose.set("strictQuery", true)
-        console.log(`DB connected. ${ conn.connection.name }`)
+        console.log(`DB connected Successfully. ${ conn.connection.name }`)
 
     } catch (error) {
         console.log('DB connect failed', error.message);

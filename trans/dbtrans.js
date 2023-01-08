@@ -1,10 +1,24 @@
 const customer = require("../models/customer");
 
-const allCustomer = (req, res) => {
+const allCustomer = async (req, res) => {
+
+try {
+  const result = await customer.find();
   res.status(200).json({
     success: true,
-    data: "You have reached the all customer",
+    data: result
   });
+
+} catch (error) {
+  console.log( 'Read all customer error', error.message )
+
+  res.status(500).json({
+    success: false,
+    data: "Read all customer error",
+    error: error.message
+  });
+
+}
 };
 
 const newCustomer = async (req, res) => {
@@ -30,11 +44,6 @@ const newCustomer = async (req, res) => {
       data: error.message,
     });
   }
-
-  res.status(200).json({
-    success: true,
-    data: req.body,
-  });
 };
 
 const findCustomer = (req, res) => {
@@ -46,14 +55,20 @@ const findCustomer = (req, res) => {
   });
 };
 
-const updateCustomer = (req, res) => {
+const updateCustomer = async (req, res) => {
   const id = req.params.id;
 
-  res.status(200).json({
-    success: true,
-    data: req.body,
-    message: `In update function ${id}`,
-  });
+  try {
+    
+  } catch (error) {
+    console.log('Update Error', error.message)
+
+    res.status(500).json({
+      success: false,
+      data: req.body,
+      message: `In update function ${id}`,
+    });
+  }
 };
 
 const deleteCustomer = (req, res) => {
