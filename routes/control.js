@@ -1,11 +1,17 @@
 const express = require("express");
 const router = express.Router();
-const { allCustomer, newCustomer, findCustomer, updateCustomer, deleteCustomer } = require("../trans/dbtrans");
+const {
+  createUsers,
+  allCustomer,
+  findCustomer,
+  updateCustomer,
+  deleteCustomer,
+} = require("../dbaccess/dbtrans");
 
-
+router.post("/adduser", createUsers);
 router.get("/all", allCustomer);
 router.get("/customer/:id", findCustomer);
-router.post("/newcustomer", newCustomer);
+
 router.put("/updatecustomer/:id", updateCustomer);
 router.delete("/deletecustomer/:id", deleteCustomer);
 

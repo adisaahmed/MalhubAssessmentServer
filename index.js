@@ -1,60 +1,44 @@
 const express = require("express");
+const dbconnect = require("./dbconnect");
+const cors = require("cors");
+
 const app = express();
-require('dotenv').config();
+app.use(express.json());
+app.options("*", cors());
+app.use(cors());
+
+require("dotenv").config();
+
+const path = require("path");
+const dir = path.join(__dirname, "public");
+app.use(express.static(dir));
+
 const control = require("./routes/control");
-const moment = require('moment');
-const { default: mongoose } = require("mongoose");
 
-
-
-app.use( (req, res, next) => {
-    console.log( 'Date/time:', moment().format(), req.originalUrl );
-    next();
-} )
-
-app.use( express.static('public') );
-app.use( express.json() );
-app.use( express.urlencoded( { extended: true } ) )
-
-const dbconnect = async ( DB_URL ) => {
-    try {
-        const conn = await mongoose.connect( DB_URL, {
-            useUnifiedTopology: true,
-        } )
-        mongoose.set("strictQuery", true)
-        console.log(`DB connected Successfully. ${ conn.connection.name }`)
-
-    } catch (error) {
-        console.log('DB connect failed', error.message);
-    }
-}
-
-
-app.use("/api", control);
-
-app.use( ( err, req, res, next ) => {
-    console.log('error is ', err.message)
-    res.status( 500 ).send('server error ' + err.message)
-} )
-
-
-
-app.get( '*', (req, res) => {
-    res.status(404).json( {
-        success: false,
-        message: ` No such resource ${ req.originalUrl } `
-    } )
-} )
-
-
-const DB_URL = process.env.DB_URL;
-dbconnect( DB_URL )
-
-
-const PORT = process.env.PORT || 3000;
-
-
-
-app.listen(PORT, () => {
-  console.log(`Server is running ${PORT}`);
+app.get("/api/", (req, res) => {
+  res.redirect("/notfound.html");
 });
+
+app.use("/api/trans", control);
+
+app.get("*", (req, res) => {
+  res.redirect("/notfound.html");
+});
+
+const errorHandler = (err, req, res, next) => {
+  console.log("Error handling.", err);
+  if (err) {
+    res.status(403).json({
+      success: false,
+      error: err,
+    });
+  }
+};
+app.use(errorHandler);
+
+const PORT = process.env.PORT || 5000;
+const DATABASE = process.env.DB_MONGO_URL;
+
+if (dbconnect(DATABASE)) {
+  app.listen(PORT, () => console.log(`Server is running ${PORT}`));
+}
